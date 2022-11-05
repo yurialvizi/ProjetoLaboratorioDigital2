@@ -23,11 +23,13 @@ architecture arch of interface_hcsr04 is
             medir      : in  std_logic;
             echo       : in  std_logic;
             fim_medida : in  std_logic;
+            timer      : in  std_logic;
             zera       : out std_logic;
+            conta      : out std_logic;
             gera       : out std_logic;
             registra   : out std_logic;
             pronto     : out std_logic;
-            db_estado  : out std_logic_vector(3 downto 0)
+            db_estado  : out std_logic_vector(3 downto 0) 
         );
     end component;
 
@@ -37,15 +39,17 @@ architecture arch of interface_hcsr04 is
             gera    : in std_logic;
             zera    : in std_logic;
             echo    : in std_logic;
+            conta   : in std_logic;
             registra : in std_logic;
             trigger : out std_logic;
+            timer : out std_logic;
             fim_medida  : out std_logic;
             distancia   : out std_logic_vector(11 downto 0)
         );
     end component;
 
 
-    signal s_fim_medida, s_zera, s_gera, s_registra : std_logic;
+    signal s_conta, s_timer, s_fim_medida, s_zera, s_gera, s_registra : std_logic;
 
 begin
 
@@ -55,8 +59,10 @@ begin
             reset      => reset,
             medir      => medir,
             echo       => echo,
+            timer      => s_timer,
             fim_medida => s_fim_medida,
             zera       => s_zera,
+            conta      => s_conta,
             gera       => s_gera,
             registra   => s_registra,
             pronto     => pronto,
@@ -69,8 +75,10 @@ begin
             gera => s_gera,
             zera => s_zera,
             echo => echo,
+            conta => s_conta,
             registra => s_registra,
             trigger => trigger,
+            timer => s_timer,
             fim_medida => s_fim_medida,
             distancia => medida
         );

@@ -7,8 +7,10 @@ entity interface_hcsr04_fd is
         gera    : in std_logic;
         zera    : in std_logic;
         echo    : in std_logic;
+        conta   : in std_logic;
         registra : in std_logic;
         trigger : out std_logic;
+        timer : out std_logic;
         fim_medida  : out std_logic;
         distancia   : out std_logic_vector(11 downto 0)
     );
@@ -59,6 +61,21 @@ architecture arch of interface_hcsr04_fd is
     );
   end component;
 
+  component contador_m is
+        generic (
+            constant M : integer := 50;
+            constant N : integer := 6
+        );
+        port (
+            clock : in std_logic;
+            zera : in std_logic;
+            conta : in std_logic;
+            Q : out std_logic_vector (N - 1 downto 0);
+            fim : out std_logic;
+            meio : out std_logic
+        );
+    end component contador_m;
+
   signal s_distancia : std_logic_vector(11 downto 0);
     
 begin
@@ -103,7 +120,19 @@ begin
         Q => distancia
      );
 
-    
+    ECHO_PERDIDO : contador_m
+    generic map(
+        M => 5_000_000, -- 100 milisegundos
+        N => 27
+    )
+    port map(
+        clock => clock,
+        zera => zera,
+        conta => conta,
+        Q => open,
+        fim => timer,
+        meio => open
+    );
     
     
 end architecture arch;

@@ -24,7 +24,9 @@ entity interface_hcsr04_uc is
         medir      : in  std_logic;
         echo       : in  std_logic;
         fim_medida : in  std_logic;
+        timer      : in  std_logic;
         zera       : out std_logic;
+        conta      : out std_logic;
         gera       : out std_logic;
         registra   : out std_logic;
         pronto     : out std_logic;
@@ -49,7 +51,7 @@ begin
     end process;
 
     -- logica de proximo estado
-    process (medir, echo, fim_medida, Eatual) 
+    process (medir, echo, fim_medida, timer, Eatual) 
     begin
       case Eatual is
         when inicial => Eprox <= espera_medir;
@@ -58,7 +60,7 @@ begin
                                 end if;
         when preparacao =>      Eprox <= envia_trigger;
         when envia_trigger =>   Eprox <= espera_echo;
-        when espera_echo =>     if echo='0' then Eprox <= espera_echo;
+        when espera_echo =>     if echo='0' and timer='0' then Eprox <= espera_echo;
                                 else             Eprox <= medida;
                                 end if;
         when medida =>          if fim_medida='1' then Eprox <= armazenamento;
@@ -75,6 +77,8 @@ begin
       zera <= '1' when preparacao | inicial, '0' when others;
   with Eatual select
       gera <= '1' when envia_trigger, '0' when others;
+  with Eatual select
+      conta <= '1' when espera_echo, '0' when others;
   with Eatual select
       registra <= '1' when armazenamento, '0' when others;
   with Eatual select
