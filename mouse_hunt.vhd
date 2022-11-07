@@ -15,9 +15,9 @@ entity mouse_hunt is
         trigger : out std_logic;
         db_pwm : out std_logic;
         db_posicao : out std_logic;
-        db_estado_interface : out std_logic_vector(3 downto 0);
-        db_estado_receptor : out std_logic_vector(3 downto 0);
-        db_estado : out std_logic_vector(3 downto 0)
+		hex0               : out std_logic_vector(6 downto 0);
+        hex1               : out std_logic_vector(6 downto 0);
+        hex2               : out std_logic_vector(6 downto 0)
     );
 end entity mouse_hunt;
 
@@ -71,8 +71,15 @@ architecture rtl of mouse_hunt is
         );
     end component;
 
-    signal s_tem_dado, s_tem_medida, s_menor, s_s_recebido, s_r_recebido, s_limpa, s_medir, s_posicao : std_logic;
+    component hex7seg is
+        port (
+            hexa : in  std_logic_vector(3 downto 0);
+            sseg : out std_logic_vector(6 downto 0)
+        );
+        end component;
 
+    signal s_tem_dado, s_tem_medida, s_menor, s_s_recebido, s_r_recebido, s_limpa, s_medir, s_posicao : std_logic;
+    signal s_estado, s_estado_receptor, s_estado_interface : std_logic_vector(3 downto 0);
 begin
 
     UC : mouse_hunt_uc
@@ -90,7 +97,7 @@ begin
         tem_presa => tem_presa,
         posicao => s_posicao,
         rato_solto => rato_solto,
-        db_estado => db_estado
+        db_estado => s_estado
     );
 
     FD : mouse_hunt_fd
@@ -111,8 +118,26 @@ begin
         trigger => trigger,
         db_pwm => db_pwm,
         db_posicao => db_posicao,
-        db_estado_interface => db_estado_interface,
-        db_estado_receptor => db_estado_receptor
+        db_estado_interface => s_estado_interface,
+        db_estado_receptor => s_estado_receptor
+    );
+
+    H0 : hex7seg
+    port map (
+        hexa => s_estado_receptor,
+        sseg => hex0
+    );
+
+    H1 : hex7seg
+    port map (
+        hexa => s_estado_interface,
+        sseg => hex1
+    );
+
+    H2 : hex7seg
+    port map (
+        hexa => s_estado,
+        sseg => hex2
     );
 
 end architecture rtl;
