@@ -15,6 +15,8 @@ entity mouse_hunt is
         trigger : out std_logic;
         db_pwm : out std_logic;
         db_posicao : out std_logic;
+        db_ligar : out std_logic;
+        db_reset : out std_logic;
 		hex0               : out std_logic_vector(6 downto 0);
         hex1               : out std_logic_vector(6 downto 0);
         hex2               : out std_logic_vector(6 downto 0)
@@ -121,6 +123,9 @@ begin
         db_estado_interface => s_estado_interface,
         db_estado_receptor => s_estado_receptor
     );
+
+    db_reset <= reset;
+    db_ligar <= ligar;
 
     H0 : hex7seg
     port map (
